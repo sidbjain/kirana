@@ -3,15 +3,14 @@ import { useProducts, type Product } from "../context/ProductContext";
 import { Search, Plus, Minus, Trash2, Printer, ShoppingCart } from "lucide-react";
 
 interface CartItem extends Product {
-    quantity: number; // in default unit (kg/liter/piece)
-    amount: number; // Total price for this item
+    quantity: number;
+    amount: number;
 }
 
 export function Billing() {
     const { products, updateProduct } = useProducts();
     const [searchTerm, setSearchTerm] = useState("");
     const [cart, setCart] = useState<CartItem[]>([]);
-    // Mobile: 'products' | 'cart'
     const [mobileTab, setMobileTab] = useState<"products" | "cart">("products");
 
     const filteredProducts = products.filter((p) =>
@@ -35,25 +34,22 @@ export function Billing() {
     const updateQuantity = (id: string, newQty: number) => {
         if (newQty < 0) return;
         setCart((prev) =>
-            prev.map((item) => {
-                if (item.id === id) {
-                    return { ...item, quantity: newQty, amount: newQty * item.price };
-                }
-                return item;
-            })
+            prev.map((item) =>
+                item.id === id
+                    ? { ...item, quantity: newQty, amount: newQty * item.price }
+                    : item
+            )
         );
     };
 
     const updateAmount = (id: string, newAmount: number) => {
         if (newAmount < 0) return;
         setCart((prev) =>
-            prev.map((item) => {
-                if (item.id === id) {
-                    const newQty = newAmount / item.price;
-                    return { ...item, amount: newAmount, quantity: newQty };
-                }
-                return item;
-            })
+            prev.map((item) =>
+                item.id === id
+                    ? { ...item, amount: newAmount, quantity: newAmount / item.price }
+                    : item
+            )
         );
     };
 
@@ -61,9 +57,7 @@ export function Billing() {
         setCart((prev) => prev.filter((item) => item.id !== id));
     };
 
-    const clearCart = () => {
-        setCart([]);
-    };
+    const clearCart = () => setCart([]);
 
     const grandTotal = cart.reduce((sum, item) => sum + item.amount, 0);
 
@@ -78,15 +72,14 @@ export function Billing() {
         window.print();
     };
 
-    // Shared product list panel
-    const ProductPanel = () => (
+    // Shared product list JSX
+    const productListJSX = (
         <div className="flex flex-col gap-4 h-full print:hidden">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
             </div>
-
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                     type="text"
                     placeholder="Search products..."
@@ -95,16 +88,12 @@ export function Billing() {
                     className="w-full pl-10 pr-4 py-3 rounded-xl border-none shadow-sm focus:ring-2 focus:ring-orange-500 outline-none"
                 />
             </div>
-
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                 {filteredProducts.map(product => (
                     <div
                         key={product.id}
-                        onClick={() => {
-                            addToCart(product);
-                            // On mobile, show a brief indication
-                        }}
-                        className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:border-orange-500 active:bg-orange-50 transition-all flex justify-between items-center group"
+                        onClick={() => addToCart(product)}
+                        className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:border-orange-500 active:bg-orange-50 transition-all flex justify-between items-center"
                     >
                         <div>
                             <h3 className="font-bold text-gray-800">{product.name}</h3>
@@ -119,8 +108,8 @@ export function Billing() {
         </div>
     );
 
-    // Shared cart panel
-    const CartPanel = () => (
+    // Shared cart JSX
+    const cartJSX = (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden h-full">
             <div id="printable-bill" className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto">
                 <div className="text-center mb-6 border-b border-dashed border-gray-300 pb-6">
@@ -141,14 +130,14 @@ export function Billing() {
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                             {cart.map((item) => (
-                                <tr key={item.id} className="group">
+                                <tr key={item.id}>
                                     <td className="py-3 font-medium text-gray-800">
                                         {item.name}
                                         <div className="text-xs text-gray-400 font-normal">₹{item.price}/{item.unit}</div>
                                     </td>
                                     <td className="py-3 text-center">
-                                        <div className="flex flex-col items-center">
-                                            <div className="flex items-center justify-center gap-1 print:hidden">
+                                        <div className="flex flex-col items-center print:hidden">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                     className="p-1 hover:bg-gray-100 rounded text-gray-500"
@@ -172,7 +161,7 @@ export function Billing() {
                                                 </button>
                                             </div>
                                             {(item.unit === "kg" || item.unit === "liter") && (
-                                                <span className="text-xs text-gray-500 mt-1 print:hidden">
+                                                <span className="text-xs text-gray-500 mt-1">
                                                     = {(item.quantity * 1000).toFixed(0)} {item.unit === "kg" ? "g" : "ml"}
                                                 </span>
                                             )}
@@ -252,10 +241,10 @@ export function Billing() {
             {/* Desktop Layout: Side by side */}
             <div className="hidden md:flex bg-gray-50 h-[calc(100vh-4rem)] gap-6">
                 <div className="w-1/2 flex flex-col gap-4 print:hidden">
-                    <ProductPanel />
+                    {productListJSX}
                 </div>
                 <div className="w-1/2 flex flex-col overflow-hidden h-full">
-                    <CartPanel />
+                    {cartJSX}
                 </div>
             </div>
 
@@ -290,15 +279,12 @@ export function Billing() {
 
                 {/* Tab Content */}
                 <div className="flex-1 overflow-hidden">
-                    {mobileTab === "products" ? (
-                        <div className="h-full flex flex-col gap-3">
-                            <ProductPanel />
-                        </div>
-                    ) : (
-                        <div className="h-full">
-                            <CartPanel />
-                        </div>
-                    )}
+                    <div className={mobileTab === "products" ? "h-full flex flex-col gap-3" : "hidden"}>
+                        {productListJSX}
+                    </div>
+                    <div className={mobileTab === "cart" ? "h-full" : "hidden"}>
+                        {cartJSX}
+                    </div>
                 </div>
             </div>
         </>
