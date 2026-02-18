@@ -55,24 +55,26 @@ export function Products() {
 
     return (
         <div className="bg-white min-h-full">
-            <div className="flex justify-between items-center mb-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Inventory</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Inventory</h1>
                     <p className="text-gray-500 mt-1">Manage your product stock</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
+                    className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors self-start sm:self-auto"
                 >
                     <Plus size={20} />
                     Add Product
                 </button>
             </div>
 
-            <div className="bg-yellow-400 rounded-xl p-6">
-                <div className="flex justify-between items-center mb-4">
+            <div className="bg-yellow-400 rounded-xl p-4 md:p-6">
+                {/* Search */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
                     <h2 className="text-xl font-bold text-yellow-900">Products List</h2>
-                    <div className="relative w-64">
+                    <div className="relative w-full sm:w-64">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-yellow-700" size={18} />
                         <input
                             type="text"
@@ -84,7 +86,45 @@ export function Products() {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg">
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
+                    {filteredProducts.map((product) => (
+                        <div key={product.id} className="bg-white rounded-xl p-4 shadow-sm">
+                            <div className="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 className="font-bold text-gray-900">{product.name}</h3>
+                                    <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{product.category}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleOpenModal(product)} className="text-yellow-600 p-1.5 hover:bg-yellow-100 rounded-lg transition-colors">
+                                        <Edit2 size={16} />
+                                    </button>
+                                    <button onClick={() => deleteProduct(product.id)} className="text-red-500 p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 mt-2 text-sm">
+                                <div>
+                                    <p className="text-gray-500 text-xs">Price</p>
+                                    <p className="font-bold text-orange-600">₹{product.price}/{product.unit}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-500 text-xs">Stock</p>
+                                    <p className={`font-bold ${product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
+                                        {product.stock} {product.unit}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {filteredProducts.length === 0 && (
+                        <div className="bg-white rounded-xl py-8 text-center text-gray-500">No products found.</div>
+                    )}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto rounded-lg">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-yellow-300 text-yellow-900">
@@ -130,7 +170,7 @@ export function Products() {
                             ))}
                             {filteredProducts.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
                                         No products found.
                                     </td>
                                 </tr>
@@ -142,8 +182,8 @@ export function Products() {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full max-w-md p-6">
                         <h2 className="text-xl font-bold mb-4">
                             {editingProduct ? "Edit Product" : "Add New Product"}
                         </h2>
@@ -196,17 +236,17 @@ export function Products() {
                                         <option value="gram">gram</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-                                    placeholder="e.g. Grains, Spices"
-                                />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
+                                        placeholder="e.g. Grains"
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex justify-end gap-3 mt-6">
