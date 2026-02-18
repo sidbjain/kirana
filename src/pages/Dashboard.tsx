@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useProducts, type Product } from "../context/ProductContext";
+import { useProducts } from "../context/ProductContext";
 import { Calculator, ShoppingBag, IndianRupee } from "lucide-react";
 import { cn } from "../lib/utils";
 
