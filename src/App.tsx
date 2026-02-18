@@ -9,8 +9,13 @@ import { ProductProvider } from "./context/ProductContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
+
+  // Wait until localStorage auth check is complete before deciding to redirect
+  if (isLoading) {
+    return null; // or a spinner if you prefer
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -18,6 +23,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
   return children;
 }
+
 
 function App() {
   return (
