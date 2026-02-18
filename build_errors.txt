@@ -1,0 +1,13 @@
+﻿src/App.tsx(1,69): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+src/App.tsx(9,51): error TS2503: Cannot find namespace 'JSX'.
+src/components/Sidebar.tsx(1,62): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/components/Sidebar.tsx(2,35): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+src/layouts/DashboardLayout.tsx(1,24): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+src/lib/utils.ts(1,39): error TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+src/lib/utils.ts(2,25): error TS2307: Cannot find module 'tailwind-merge' or its corresponding type declarations.
+src/pages/Dashboard.tsx(2,23): error TS1484: 'Product' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Dashboard.tsx(2,23): error TS6133: 'Product' is declared but its value is never read.
+src/pages/Dashboard.tsx(3,54): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/pages/Login.tsx(2,29): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+src/pages/Login.tsx(4,28): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+src/pages/Products.tsx(3,45): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
